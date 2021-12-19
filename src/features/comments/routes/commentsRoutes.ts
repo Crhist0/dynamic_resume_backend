@@ -25,8 +25,11 @@ commentsRoutes.get(`/comments`, async (req: Request, res: Response) => {
 
 commentsRoutes.get(`/comments-dev`, async (req: Request, res: Response) => {
     try {
-        const comments = await new CommentsController().readAll();
-        console.log();
+        let query = req.query.approved;
+        let approved: boolean;
+        (query as string) == "true" ? (approved = true) : (approved = false);
+
+        const comments = await new CommentsController().read(approved);
 
         return res.status(200).send({
             message: "Mostrando comments.",
@@ -59,8 +62,8 @@ commentsRoutes.post(`/comments`, postMiddlewares, async (req: Request, res: Resp
 
 commentsRoutes.put(`/comments`, putMiddlewares, async (req: Request, res: Response) => {
     try {
-        let { uid, name, comment, aproved } = req.body;
-        const updatedComment = await new CommentsController().update(uid, name, comment, aproved);
+        let { uid, name, comment, approved } = req.body;
+        const updatedComment = await new CommentsController().update(uid, name, comment, approved);
         const comments = await new CommentsController().readFiltered();
         return res.status(200).send({
             message: "Comentário atualizado.",
