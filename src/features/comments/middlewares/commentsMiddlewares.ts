@@ -3,6 +3,8 @@ import { NextFunction, Request, Response } from "express";
 let verifyEmptyFields = (req: Request, res: Response, next: NextFunction) => {
     let { name, comment } = req.body;
 
+    console.log(name + " : " + comment + " - " + req.ip);
+
     if (!name || !comment) {
         return res.status(400).send({
             message: "Insira um nome e um comentário.",

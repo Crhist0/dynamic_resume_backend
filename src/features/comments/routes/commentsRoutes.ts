@@ -4,15 +4,13 @@ import { verifyEmptyFields, verifyMaxLength } from "../middlewares/commentsMiddl
 
 const commentsRoutes = Router();
 
-let getMiddlewares = [];
 let postMiddlewares = [verifyEmptyFields, verifyMaxLength];
-let putMiddlewares = [verifyEmptyFields, verifyMaxLength];
 
 commentsRoutes.get(`/comments`, async (req: Request, res: Response) => {
     try {
-        const comments = await new CommentsController().readFiltered();
+        const comments = await new CommentsController().readAll();
         return res.status(200).send({
-            message: "Mostrando comments.",
+            message: "Mostrando comentários.",
             data: comments,
         });
     } catch (error) {
@@ -27,7 +25,7 @@ commentsRoutes.get(`/comments-dev`, async (req: Request, res: Response) => {
     try {
         let query = req.query.approved;
         let approved: boolean;
-        (query as string) == "true" ? (approved = true) : (approved = false);
+        (query as string) == "false" ? (approved = false) : (approved = true);
 
         const comments = await new CommentsController().read(approved);
 
@@ -47,24 +45,23 @@ commentsRoutes.post(`/comments`, postMiddlewares, async (req: Request, res: Resp
     try {
         let { name, comment } = req.body;
         const newComment = await new CommentsController().create(name, comment);
-        const comments = await new CommentsController().readFiltered();
         return res.status(201).send({
-            message: "Comentário criado.",
-            data: comments,
+            title: "Obrigado por comentar!",
+            message: "Seu comentário será analisado e poderá aparecer aqui :)",
         });
     } catch (error) {
         return res.status(500).send({
-            message: "Erro ao criar comentário.",
+            message: "Erro ao criar comentário, tente novamente mais tarde.",
             error,
         });
     }
 });
 
-commentsRoutes.put(`/comments`, putMiddlewares, async (req: Request, res: Response) => {
+commentsRoutes.put(`/comments`, async (req: Request, res: Response) => {
     try {
-        let { uid, name, comment, approved } = req.body;
-        const updatedComment = await new CommentsController().update(uid, name, comment, approved);
-        const comments = await new CommentsController().readFiltered();
+        let { uid } = req.body;
+        const updatedComment = await new CommentsController().update(uid);
+        const comments = await new CommentsController().readAll();
         return res.status(200).send({
             message: "Comentário atualizado.",
             data: comments,

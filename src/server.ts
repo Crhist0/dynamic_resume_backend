@@ -3,10 +3,11 @@ import cors from "cors";
 import { initConnection } from "./database/connections/database-connection";
 import { contactsRoutes } from "./features/contacts/routes/contactsRoutes";
 import { commentsRoutes } from "./features/comments/routes/commentsRoutes";
+import { adminRoutes } from "./features/admin_list/routes/adminRoutes";
 
 const app = express();
 
-app.use(express.json(), cors(), contactsRoutes, commentsRoutes);
+app.use(express.json(), cors(), contactsRoutes, commentsRoutes, adminRoutes);
 
 initConnection()
     .then(() => app.listen(process.env.PORT, () => console.log("Server is running")))

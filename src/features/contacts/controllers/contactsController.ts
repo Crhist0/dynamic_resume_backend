@@ -14,26 +14,17 @@ export class ContactsController {
         );
     }
 
-    // lista todos os contatos da database com uma ordem específica como nome ou data de criação
+    // lista todos os novos contatos da database com uma ordem específica como nome ou data de criação
     async read(order_by: string) {
         let connection = getConnection();
-        let contacts = await connection.manager.query(
-            `SELECT * FROM contacts ORDER BY ${order_by};` // [order_by] // order_by espera 'name', 'phone', 'email', 'prefers_contact_by', 'created_at' e 'new'
-        );
+        let contacts = await connection.manager.query(`SELECT * FROM contacts WHERE new = true ORDER BY ${order_by};`);
         return contacts;
     }
 
-    // atualiza um contato por uid
-    async update(uid: string, name: string, phone: string, email: string, prefers_contact_by: string, newContact: boolean) {
+    // atualiza um contato (new = false) por uid
+    async update(uid: string) {
         let connection = getConnection();
-        let updateContact = await connection.manager.query(`UPDATE contacts SET name = $2, phone = $3, email = $4, prefers_contact_by = $5, new = $6 WHERE uid = $1 `, [
-            uid,
-            name,
-            phone,
-            email,
-            prefers_contact_by,
-            newContact,
-        ]);
+        let updateContact = await connection.manager.query(`UPDATE contacts SET new = false WHERE uid = $1 `, [uid]);
     }
 
     // deleta um contato por uid
@@ -41,12 +32,4 @@ export class ContactsController {
         let connection = getConnection();
         let deleteContact = await connection.manager.query(`DELETE FROM contacts WHERE uid = $1`, [uid]);
     }
-
-    // TODO: apagar esta função
-    // lista um contatos da database pelo id
-    // async readOne(uid: string) {
-    //     let connection = getConnection();
-    //     let contact = await connection.manager.query(`SELECT * FROM contacts WHERE uid = $1;`, [uid]);
-    //     return contact;
-    // }
 }

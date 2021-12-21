@@ -6,7 +6,6 @@ const contactsRoutes = Router();
 
 let getMiddlewares = [orderBy];
 let postMiddlewares = [orderBy, verifyEmptyFields, verifyMaxLength];
-let putMiddlewares = [orderBy, verifyEmptyFields, verifyMaxLength];
 
 contactsRoutes.get(`/contacts`, getMiddlewares, async (req: Request, res: Response) => {
     try {
@@ -28,24 +27,27 @@ contactsRoutes.post(`/contacts`, postMiddlewares, async (req: Request, res: Resp
     try {
         let { name, phone, email, prefers_contact_by } = req.body;
         const contact = await new ContactsController().create(name, phone, email, prefers_contact_by);
-        const contactList = await new ContactsController().read("created_at desc");
         return res.status(201).send({
-            message: "Contato criado",
-            data: contactList,
+            title: "Contato registrado",
+            message: "Em breve você será contatado.",
         });
     } catch (error) {
         return res.status(500).send({
-            message: "Erro ao criar contato",
+            message: "Erro ao criar contato, tente novamente mais tarde.",
             error,
         });
     }
 });
 
-contactsRoutes.put(`/contacts`, putMiddlewares, async (req: Request, res: Response) => {
+contactsRoutes.put(`/contacts`, async (req: Request, res: Response) => {
     try {
-        let { uid, name, phone, email, prefers_contact_by, newContact } = req.body;
-        const contact = await new ContactsController().update(uid, name, phone, email, prefers_contact_by, newContact);
+        let { uid } = req.body;
+        console.log(uid);
+
+        const contact = await new ContactsController().update(uid);
+
         const contactList = await new ContactsController().read("created_at desc");
+
         return res.status(200).send({
             message: "Contato atualizado",
             data: contactList,

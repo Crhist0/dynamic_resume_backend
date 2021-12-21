@@ -13,29 +13,15 @@ export class CommentsController {
             [name, comment]
         );
     }
-    // TODO: apagar algumas funções read
-    // listar os comentários da database por ordem decrescente de adição
+
+    // listar os comentários aprovados ou naoda database por ordem decrescente de criação
     async read(approved: boolean) {
         let connection = getConnection();
         let contacts = await connection.manager.query(`SELECT * FROM comments WHERE approved = $1 ORDER BY created_at DESC;`, [approved]);
         return contacts;
     }
 
-    // lista  os comentários aprovados da database por ordem decrescente de adição
-    async readFiltered() {
-        let connection = getConnection();
-        let contacts = await connection.manager.query(`SELECT * FROM comments WHERE approved = true ORDER BY created_at DESC;`);
-        return contacts;
-    }
-
-    // lista  os comentários não aprovados da database por ordem decrescente de adição
-    async readUnapproved() {
-        let connection = getConnection();
-        let contacts = await connection.manager.query(`SELECT * FROM comments WHERE approved = false ORDER BY created_at DESC;`);
-        return contacts;
-    }
-
-    // lista todos os comentários da database por ordem decrescente de adição
+    // lista todos os comentários da database por ordem decrescente de criação
     async readAll() {
         let connection = getConnection();
         let contacts = await connection.manager.query(`SELECT * FROM comments ORDER BY created_at DESC;`);
@@ -43,9 +29,9 @@ export class CommentsController {
     }
 
     // atualiza o comentário por uid
-    async update(uid: string, name: string, comment: string, approved: boolean) {
+    async update(uid: string) {
         let connection = getConnection();
-        let updateContact = await connection.manager.query(`UPDATE comments SET name = $2, comment = $3, approved = $4 WHERE uid = $1 `, [uid, name, comment, approved]);
+        let updateContact = await connection.manager.query(`UPDATE comments SET approved = true WHERE uid = $1 `, [uid]);
     }
 
     // deleta um comentário por uid
