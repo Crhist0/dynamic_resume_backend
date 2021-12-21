@@ -74,6 +74,23 @@ commentsRoutes.put(`/comments`, async (req: Request, res: Response) => {
     }
 });
 
+commentsRoutes.put(`/comments-dev`, async (req: Request, res: Response) => {
+    try {
+        let { uid } = req.body;
+        const updatedComment = await new CommentsController().updateToFalse(uid);
+        const comments = await new CommentsController().readAll();
+        return res.status(200).send({
+            message: "Comentário atualizado.",
+            data: comments,
+        });
+    } catch (error) {
+        return res.status(500).send({
+            message: "Erro ao atualizar comentário.",
+            error,
+        });
+    }
+});
+
 commentsRoutes.delete(`/comments`, async (req: Request, res: Response) => {
     try {
         let { uid } = req.query;

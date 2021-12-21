@@ -28,10 +28,15 @@ export class CommentsController {
         return contacts;
     }
 
-    // atualiza o comentário por uid
+    // atualiza o comentário por uid (approved = true)
     async update(uid: string) {
         let connection = getConnection();
         let updateContact = await connection.manager.query(`UPDATE comments SET approved = true WHERE uid = $1 `, [uid]);
+    }
+    // atualiza o comentário por uid (approved = false)
+    async updateToFalse(uid: string) {
+        let connection = getConnection();
+        let updateContact = await connection.manager.query(`UPDATE comments SET approved = false WHERE uid = $1 `, [uid]);
     }
 
     // deleta um comentário por uid
